@@ -72,24 +72,37 @@ namespace TechStar.ViewModels
                     {
                         using (PostgersContext db = new PostgersContext())
                         {
-                            Word word = new Word { Name = TextBoxWord };
-                            Log log = new Log { Date = DateTime.Now };
-                            db.Words.Add(word);
-                            db.SaveChanges();
-                            log.IDWord = word.ID;
-                            db.Logs.Add(log);
-                            db.SaveChanges();
-                        }
-                        Application.Current.Dispatcher.Invoke(delegate
-                        {
-                            Snackbar snackbar = obj as Snackbar;
-                            var messageQueue = snackbar.MessageQueue;
-                            var message = "Добавлено";
-                            Task.Factory.StartNew(() => messageQueue.Enqueue(message));
-                        });
+                            if (CurrentWord != null)
+                            {
+                                Word word= db.Words.Find(CurrentWord.ID);
+                                word.Name = TextBoxWord;
+                                db.SaveChanges();
+                                ShowSnackBar(obj, "Изменено");
+                            } else
+                            {
+                                Word word = new Word { Name = TextBoxWord };
+                                Log log = new Log { Date = DateTime.Now };
+                                db.Words.Add(word);
+                                db.SaveChanges();
+                                log.IDWord = word.ID;
+                                db.Logs.Add(log);
+                                db.SaveChanges();
+                                ShowSnackBar(obj, "Добавлено");
+                            }                            
+                        }                        
                         GetWords();
-                    }));
+                    }, obj => (TextBoxWord != null && TextBoxWord.Length > 0)));
             }
+        }
+
+        private static void ShowSnackBar(object obj, string message)
+        {
+            Application.Current.Dispatcher.Invoke(delegate
+            {
+                Snackbar snackbar = obj as Snackbar;
+                var messageQueue = snackbar.MessageQueue;
+                Task.Factory.StartNew(() => messageQueue.Enqueue(message));
+            });
         }
 
         private void GetWords()

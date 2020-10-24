@@ -24,7 +24,7 @@
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="{Binding Path=Name}"/>
                         <TextBlock Text="Дата создания (" Margin="5, 0, 0, 0"/>
-                        <TextBlock Text="{Binding Path=Logs[0].Date, StringFormat='dd.MM.yyyy mm:HH:ss'}"/>
+                        <TextBlock Text="{Binding Path=Logs[0].Date, StringFormat='dd.MM.yyyy HH:mm:ss'}"/>
                         <TextBlock Text=")"/>
                     </StackPanel>
                 </DataTemplate>
